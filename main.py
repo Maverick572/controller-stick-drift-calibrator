@@ -1,28 +1,47 @@
 from joystickUI import UI
+import sys
+import os
 import pygame
-from joystickMapper import start_mapper, stop_mapper
-import sys, os
+
+
+# ───────────────────────────── Resources ───────────────────────────── #
 
 def resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller bundle."""
     try:
-        base_path = sys._MEIPASS  # temp folder PyInstaller extracts to
+        base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+
+# ───────────────────────────── Pygame Init ───────────────────────────── #
+# IMPORTANT:
+# pygame + joystick MUST be initialized ONCE on Windows.
+# Re-initializing causes devices to disappear.
+
+pygame.init()
+pygame.joystick.init()
+
+
+# ───────────────────────────── Device Refresh ───────────────────────────── #
+
 def refresh_devices():
-    pygame.init()
-    pygame.joystick.init()
-    return [pygame.joystick.Joystick(i).get_name()
-            for i in range(pygame.joystick.get_count())]
+    """
+    Enumerate all joystick device names.
+    pygame must already be initialized.
+    """
+    names = []
 
-# Create UI instance
-ui = UI(on_start=start_mapper, on_stop=stop_mapper, on_refresh=refresh_devices)
+    # DO NOT re-init pygame here
+    for i in range(pygame.joystick.get_count()):
+        js = pygame.joystick.Joystick(i)
+        names.append(js.get_name())
 
-# Set window properties AFTER creation
-ui.app.title("Joystick Calibrator")
+    return names
+
+
+# ───────────────────────────── App Startup ───────────────────────────── #
+
+ui = UI(on_refresh=refresh_devices)
 ui.app.iconbitmap(resource_path("icon.ico"))
-
-# Run app
 ui.run()
