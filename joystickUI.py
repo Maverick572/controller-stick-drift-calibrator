@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import pygame
+import sys,os
 
 from joystickMapper import (
     create_virtual_joystick,
@@ -8,8 +9,15 @@ from joystickMapper import (
     stop_mapping,
 )
 
+def resource_path(path):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, path)
+    return os.path.abspath(path)
+
 class UI:
     def __init__(self, on_refresh):
+        self.app = ctk.CTk()
+        self.app.iconbitmap(resource_path("icon.ico"))
         self.on_refresh = on_refresh
 
         self.preview_js = None
@@ -30,9 +38,7 @@ class UI:
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
 
-        self.app = ctk.CTk()
         self.app.title("Joystick Calibrator")
-        self.app.geometry("460x760")
         self.app.resizable(False, False)
         self.app.minsize(460, 760)
         self.app.maxsize(460, 760)
@@ -105,7 +111,7 @@ class UI:
         self.center_btn.pack(side="left", padx=6)
 
         self.auto_btn = ctk.CTkButton(
-            tools, text="Start Auto Min/Max", command=self.toggle_auto_capture
+            tools, text="Calibrate Extremes", command=self.toggle_auto_capture
         )
         self.auto_btn.pack(side="left", padx=6)
 
@@ -292,7 +298,7 @@ class UI:
             self.captured_min = [float("inf")] * 4
             self.captured_max = [float("-inf")] * 4
 
-            self.auto_btn.configure(text="Stop Auto Min/Max")
+            self.auto_btn.configure(text="Stop Calibration")
             self.toggle_btn.configure(state="disabled")  # 🔒 disable mapping
 
             self.status_label.configure(
@@ -302,7 +308,7 @@ class UI:
         # STOP auto capture → apply values
         else:
             self.auto_capture = False
-            self.auto_btn.configure(text="Start Auto Min/Max")
+            self.auto_btn.configure(text="Calibrate Extremes")
             self.toggle_btn.configure(state="normal")  # 🔓 re-enable mapping
 
             for i in range(4):
