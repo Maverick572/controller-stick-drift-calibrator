@@ -2,6 +2,14 @@
 
 A Windows utility that detects, visualizes, and compensates for analog stick drift in game controllers by creating a calibrated virtual controller output.
 
+## Download
+
+📦 Download the latest release:
+
+[Gumroad Download] https://maverick0071.gumroad.com/l/joystick-calibrator
+
+No source code setup required. Simply download and run the packaged application.
+
 ## Overview
 
 Controller stick drift is a common issue where analog sticks register movement even when untouched. This can make games difficult or impossible to play accurately.
